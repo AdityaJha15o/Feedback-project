@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #667eea, #764ba2);
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .btn-custom {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-custom:hover {
+            background: #5a67d8;
+        }
+
+        .feedback-item {
+            transition: 0.3s;
+        }
+
+        .feedback-item:hover {
+            transform: scale(1.03);
+        }
+
+        .clickable-card {
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .clickable-card:hover {
+            transform: scale(1.05);
+            background-color: #f1f1f1;
+        }
+
+        .navbar {
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark px-4">
+    <span class="navbar-brand">📊 Feedback Dashboard</span>
+    <div class="text-white">
+        {{ request.user.username }} |
+        <a href="{% url 'logout' %}" class="text-danger text-decoration-none">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- CLICKABLE DASHBOARD -->
+    <div class="row text-center mb-4">
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow clickable-card" onclick="toggleSection('totalBox')">
+                <h5>📊 Total Feedback</h5>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow clickable-card" onclick="toggleSection('userBox')">
+                <h5>👤 User Info</h5>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow clickable-card" onclick="toggleSection('statusBox')">
+                <h5>⚡ Status</h5>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HIDDEN SECTIONS -->
+    <div id="totalBox" class="card p-3 shadow mb-3 d-none text-center">
+        <h4>Total Feedback: {{ feedbacks|length }}</h4>
+    </div>
+
+    <div id="userBox" class="card p-3 shadow mb-3 d-none text-center">
+        <h4>User: {{ request.user.username }}</h4>
+    </div>
+
+    <div id="statusBox" class="card p-3 shadow mb-3 d-none text-center">
+        <h4>Status: Active ✅</h4>
+    </div>
+
+    <div class="row">
+
+        <!-- FORM -->
+        <div class="col-md-5">
+            <div class="card p-4 shadow">
+                <h4 class="mb-3">Submit Feedback</h4>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Your Name" required>
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Your Email" required>
+                    <textarea name="message" class="form-control mb-3" rows="4" placeholder="Your Feedback" required></textarea>
+
+                    <button type="submit" class="btn btn-custom w-100">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- FEEDBACK LIST -->
+        <div class="col-md-7">
+            <div class="card p-4 shadow">
+                <h4 class="mb-3">All Feedback</h4>
+
+                {% for fb in feedbacks %}
+                <div class="card mb-3 p-3 feedback-item">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ fb.name }}</strong><br>
+                            <small class="text-muted">{{ fb.email }}</small>
+                        </div>
+
+                        <div>
+                            <a href="{% url 'edit' fb.id %}" class="btn btn-warning btn-sm me-2">Edit</a>
+
+                            <form action="{% url 'delete' fb.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <p class="mt-2">{{ fb.message }}</p>
+
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">No feedback yet</p>
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+function toggleSection(id) {
+    let element = document.getElementById(id);
+
+    if (element.classList.contains("d-none")) {
+        element.classList.remove("d-none");
+    } else {
+        element.classList.add("d-none");
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Feedback</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #36d1dc, #5b86e5);
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <div class="card p-4 shadow">
+
+        <h3 class="text-center mb-4">✏️ Edit Feedback</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- NAME -->
+            <label>Name</label>
+            <input type="text" name="name" 
+                   value="{{ fb.name }}" 
+                   class="form-control mb-3" required>
+
+            <!-- EMAIL -->
+            <label>Email</label>
+            <input type="email" name="email" 
+                   value="{{ fb.email }}" 
+                   class="form-control mb-3" required>
+
+            <!-- MESSAGE -->
+            <label>Feedback</label>
+            <textarea name="message" rows="4" 
+                      class="form-control mb-4" required>{{ fb.message }}</textarea>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'home' %}" class="btn btn-secondary">⬅ Back</a>
+                <button type="submit" class="btn btn-success">Update</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>
